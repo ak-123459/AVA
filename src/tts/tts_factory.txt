@@ -1,0 +1,14 @@
+.murf_text_to_speech import Murf_tts_api
+
+class TTSFactory:
+    @staticmethod
+    def create_tts_pipeline(tts_type, **kwargs):
+
+        if tts_type == "murf":
+            
+             return   Murf_tts_api(**kwargs)
+
+
+        else:
+
+            raise ValueError(f"Unknown ASR pipeline type: {tts_type}")
