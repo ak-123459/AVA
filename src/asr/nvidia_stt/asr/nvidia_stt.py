@@ -8,9 +8,6 @@ from dotenv import load_dotenv
 
 
 
-load_dotenv(dotenv_path="/root/.envs/shared.env")
-
-
 
 # Connection and ASR Configuration (Hardcoded or from env)
 
