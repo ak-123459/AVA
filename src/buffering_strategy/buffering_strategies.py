@@ -4,7 +4,10 @@ import os
 import time
 from dotenv import load_dotenv
 import requests
+import logging
 
+# Create logging instance
+logger = logging.getLogger(__name__)
 
 
 from .buffering_strategy_interface import BufferingStrategyInterface
@@ -134,23 +137,32 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
             if transcription["text"] != "":
 
 
-                llm_response =  self.llm_pipeline.generate_response({'query':transcription["text"],'last_3_turn':[{"role":"user","content":""},{"role":"assistant","content":""}]})
+                llm_response = await llm_pipeline.generate_response({'query':transcription["text"],'last_3_turn':[{"role":"user","content":""},{"role":"assistant","content":""}]})
 
                 end = time.time()
 
                 transcription["processing_time"] = end - start
 
-                if(llm_response):
+                if llm_response:
+                    try:
+                        audio_stream = await tts_pipeline.synthesise_stream_audio(llm_response.strip())
+                    except Exception as e:
+                        logger.error(f"TTS error: {e}")
+                        audio_stream = None
 
-                  
+                    await websocket.send(json.dumps(transcription))
 
-                  audio_stream = tts_pipeline.synthesise_stream_audio(llm_response.strip(),self.client)
-                  
-                  for chunk in  audio_stream:
-                       
-                         await websocket.send(chunk)
+                    if audio_stream:
+                      try:
+                         for chunk in audio_stream:
+                             await websocket.send(chunk)
+                      except Exception as e:
+                         logger.error(f"Error while sending audio stream: {e}")
+                    else:
+                         logger.warning("No audio stream returned from TTS.")
+                else:
+                        logger.warning("LLM response was empty.")
 
-                  
             self.client.scratch_buffer.clear()
             self.client.increment_file_counter()
 

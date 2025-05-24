@@ -68,9 +68,8 @@ class Server:
                 print(f"Unexpected message type from {client.client_id}")
 
             # this is synchronous, any async operation is in BufferingStrategy
-            client.process_audio(
-                websocket, self.vad_pipeline, self.asr_pipeline,self.tts_pipeline
-            )
+            client.process_audio(websocket, self.vad_pipeline, self.asr_pipeline,self.tts_pipeline
+ ,self.llm_pipeline)
 
     async def handle_websocket(self, websocket):
         client_id = str(uuid.uuid4())

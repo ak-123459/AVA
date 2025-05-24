@@ -6,17 +6,25 @@ import os
 from src.asr.asr_factory import ASRFactory
 from src.vad.vad_factory import VADFactory
 from src.tts.tts_factory import TTSFactory
-from src.tts.tts_factory import LLMFactory
+from src.llm.llm_factory import LLMFactory
 
 from .server import Server
 from dotenv import load_dotenv
+import logging
+
+
+
+# Create a logger instance
+logger = logging.getLogger(__name__)
 
 
 
 
 
 
-load_dotenv(dotenv_path="/root/.envs/shared.env")
+
+
+load_dotenv()
 
 
 # huggingface token
@@ -27,7 +35,9 @@ NVC_API_KEY = os.getenv("NVIDIA_STT_API_KEY")
 
 
 # murf api key 
-MURF_API_KEY = os.getenv("MURF_STT_API_KEY")
+MURF_API_KEY = os.getenv("MURF_TTS_API_KEY")
+
+
 
 
 
@@ -175,7 +185,7 @@ def main():
         tts_args.setdefault("format", "WAV")
         tts_args.setdefault("sample_rate", "44100")
         tts_args.setdefault("voice_id", "hi-IN-kabir")
-        tts_args["MURF_STT_API_KEY"] = MURF_API_KEY
+        tts_args["MURF_TTS_API_KEY"] = MURF_API_KEY
 
 
 
@@ -184,8 +194,7 @@ def main():
 
         llm_args['payloads'] = '{"query":"Hello","last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]}'
 
-      
-
+        llm_args['endpoint'] = "/chat"
 
 
     except json.JSONDecodeError as e:
@@ -195,13 +204,16 @@ def main():
 
 
     vad_pipeline = VADFactory.create_vad_pipeline(args.vad_type, **vad_args)
-
+    logger.info("VAD object created successfully..")
+    
     asr_pipeline = ASRFactory.create_asr_pipeline(args.asr_type, **asr_args)
-    
-    tts_pipeline = TTSFactory.create_tts_pipeline(args.tts_type, **asr_args)
-    
-    llm_pipeline = LLMFactory.create_llm_pipeline(args.llm_type, **asr_args)
-
+    logger.info("ASR(STT) object created successfully..")
+   
+    tts_pipeline = TTSFactory.create_tts_pipeline(args.tts_type, **tts_args)
+    logger.info("TTS object created successfully..")
+ 
+    llm_pipeline = LLMFactory.create_llm_pipeline(args.llm_type, **llm_args)
+    logger.info("LLM inference class object created successfully..")
 
     
 

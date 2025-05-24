@@ -1,6 +1,6 @@
 from .faster_whisper_asr import FasterWhisperASR
 from .whisper_asr import WhisperASR
-from .nvidia_stt.asr import Nvidia_STT_API
+from .nvidia_stt.asr.nvidia_stt_api import Nvidia_STT_API
 
 
 class ASRFactory:
