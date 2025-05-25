@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Streamed Audio Player with Logs</title>
+</head>
+<body>
+  <h1>Streamed Audio Playback</h1>
+  <button id="playBtn">Play Audio</button>
+
+  <script>
+    async function playStreamingAudio() {
+      const apiUrl = "https://api.murf.ai/v1/speech/stream";
+      const apiKey = "ap2_5c612e0f-8632-450c-9973-4d4035ba83be"; // your API key
+
+      const requestBody = {
+        text: `एक बार की बात है, राम और श्याम दो अच्छे दोस्त थे। एक दिन राम के पाँव में चोट लग गई। श्याम ने उसे तुरंत अपनी मदद दी, पानी पिलाया और आराम करने के लिए कहा। राम ने कहा, "अगर तुम न होते, तो मैं बहुत परेशान हो जाता।" श्याम मुस्कराया और बोला, "दोस्ती का मतलब ही एक-दूसरे की मदद करना है।"
+
+इस तरह सच्ची दोस्ती हमेशा साथ निभाती है।`,
+        voiceId: "hi-IN-kabir",
+      };
+
+      const startTime = performance.now();
+      console.log("🚀 Request started at:", new Date().toISOString());
+
+      try {
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "api-key": apiKey,
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        const responseTime = performance.now();
+        console.log("📥 Response received at:", new Date().toISOString());
+        console.log(`⏱️ Time to get response: ${(responseTime - startTime).toFixed(2)} ms`);
+
+        if (!response.ok) throw new Error("Network response was not OK");
+
+        const contentType = response.headers.get("Content-Type") || "audio/wav";
+        console.log("Response Content-Type:", contentType);
+
+        const arrayBuffer = await response.arrayBuffer();
+        const bufferTime = performance.now();
+        console.log("📦 Audio data received and buffered at:", new Date().toISOString());
+        console.log(`⏱️ Time to read audio buffer: ${(bufferTime - responseTime).toFixed(2)} ms`);
+
+        const audioBlob = new Blob([arrayBuffer], { type: contentType });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioUrl);
+        audio.controls = true;
+        document.body.appendChild(audio);
+
+        const beforePlayTime = performance.now();
+        await audio.play();
+        const playStartTime = performance.now();
+        console.log("🔊 Audio started playing at:", new Date().toISOString());
+        console.log(`⏱️ Time from buffered to play start: ${(playStartTime - beforePlayTime).toFixed(2)} ms`);
+        console.log(`⏱️ Total time from request start to play start: ${(playStartTime - startTime).toFixed(2)} ms`);
+      } catch (error) {
+        console.error("❌ Audio play error:", error);
+      }
+    }
+
+    document.getElementById("playBtn").addEventListener("click", () => {
+      playStreamingAudio();
+    });
+  </script>
+</body>
+</html>

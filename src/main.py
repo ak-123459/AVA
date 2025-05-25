@@ -30,11 +30,11 @@ load_dotenv()
 # huggingface token
 HUGGING_FACE_TOKEN=os.getenv("HUGGINGFACE_TOKEN")
 
-# API Key from .env 
+# nvidia api key
 NVC_API_KEY = os.getenv("NVIDIA_STT_API_KEY")
 
 
-# murf api key 
+# murf api key
 MURF_API_KEY = os.getenv("MURF_TTS_API_KEY")
 
 
@@ -164,7 +164,7 @@ def main():
         tts_args = json.loads(args.tts_args)
         llm_args = json.loads(args.llm_args)
 
-        
+
 
          # Inject asr_args values
         asr_args.setdefault("model_size", "large-v3")
@@ -181,7 +181,7 @@ def main():
 
 
 
-        # Inject tts_args values 
+        # Inject tts_args values
         tts_args.setdefault("format", "WAV")
         tts_args.setdefault("sample_rate", "44100")
         tts_args.setdefault("voice_id", "hi-IN-kabir")
@@ -190,7 +190,7 @@ def main():
 
 
         # Inject llm_args values
-        llm_args['host'] = "http://127.0.0.1:8000" 
+        llm_args['host'] = "http://127.0.0.1:8000"
 
         llm_args['payloads'] = '{"query":"Hello","last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]}'
 
@@ -205,17 +205,17 @@ def main():
 
     vad_pipeline = VADFactory.create_vad_pipeline(args.vad_type, **vad_args)
     logger.info("VAD object created successfully..")
-    
+
     asr_pipeline = ASRFactory.create_asr_pipeline(args.asr_type, **asr_args)
     logger.info("ASR(STT) object created successfully..")
-   
+
     tts_pipeline = TTSFactory.create_tts_pipeline(args.tts_type, **tts_args)
     logger.info("TTS object created successfully..")
- 
+
     llm_pipeline = LLMFactory.create_llm_pipeline(args.llm_type, **llm_args)
     logger.info("LLM inference class object created successfully..")
 
-    
+
 
 
     server = Server(

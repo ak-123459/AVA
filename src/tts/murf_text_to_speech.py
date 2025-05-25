@@ -4,7 +4,7 @@ from murf import Murf
 import os
 import logging
 import inspect
-
+from urllib.parse import urlparse
 # Create a logger instance
 logger = logging.getLogger(__name__)
 
@@ -13,11 +13,11 @@ logger = logging.getLogger(__name__)
 
 class Murf_tts_api(TTSInterface):
 
-    
+
   def __init__(self,**kwargs):
-      
+
       self.api_key = kwargs.get("MURF_TTS_API_KEY")
-    
+
       self.murf_client = Murf(api_key = self.api_key)
 
       self.voice_id = kwargs.get("voice_id","hi-IN-kabir")
@@ -29,8 +29,9 @@ class Murf_tts_api(TTSInterface):
       self.output_file = kwargs.get("output_file","tts_test_file.wav")
 
 
-  
-  async def  synthesise_stream_audio(self,text:str=None):
+
+  async def  synthesise_stream_audio(self,text:str=None)->str:
+
 
      if(text is None):
         text = self.text
@@ -41,7 +42,7 @@ class Murf_tts_api(TTSInterface):
 
      voice_id= self.voice_id,    format = self.format, sample_rate =self.sample_rate )
 
-    
+
      print("[tts] received streaming object..")
 
      logger.info("Murf text to speech streaming obeject created...")
@@ -55,48 +56,48 @@ class Murf_tts_api(TTSInterface):
 
 
 
-  async def speech_synthesis(self,text:str=None,client=None):
+  async def speech_synthesis(self,text:str=None)->str:
 
-    if(client is not None):
+    global res
 
-        file_name =  client.get_file_name()
-    else:
+    try:
 
-      file_name = self.output_file
+     res =  self.murf_client.text_to_speech.generate(text= text,  voice_id=self.voice_id, format = self.format, sample_rate =self.sample_rate)
 
-    res = self.murf_client.text_to_speech.generate(text= text,  voice_id=self.voice_id, format = self.format, sample_rate =self.sample_rate)
-    
-    
+    except Exception as e:
+
+         logger.error(f"murf client error {e}")
+
+    # Receiving the audio url
+
     url = res.audio_file
-    
 
+    try:
 
-    r = requests.get(url)
+        result = urlparse(url)
+        # A valid URL should have at least scheme and netloc
+        is_valid_url =  all([result.scheme, result.netloc])
 
+        if is_valid_url:
 
-    if(r.status_code==200):  
-  
-    
-      with open( file_name, 'wb') as f:
+            logger.info("Murf text to speech file  created...")
 
-         f.write(r.content)
-        
-      print("text to speech completed.")   
-    
-    else:
-    
-      print("murf source audio file not found")
+            return url
 
-   
-    os.remove(file_name)
+    except ValueError:
 
-    logger.info("Murf text to speech file  created...")
-   
-  
+        logger.error("Murf text to speech error...")
+
+        print("tts error...")
 
 
 
 
 
 
-           
+
+
+
+
+
+

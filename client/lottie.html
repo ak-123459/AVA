@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lottie Local Animation Example</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.9.6/lottie.min.js"></script>
+  <style>
+    #lottie-container {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+    }
+    #play-btn {
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h2 style="text-align:center;">Lottie Local Animation</h2>
+  <div id="lottie-container"></div>
+  <button id="play-btn">Play Animation</button>
+
+  <script>
+    const animation = lottie.loadAnimation({
+      container: document.getElementById('lottie-container'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: false,
+      path: 'assets/voice_animation.json' // Local path
+    });
+
+    document.getElementById('play-btn').addEventListener('click', function() {
+      animation.goToAndPlay(0, true);
+    });
+
+
+
+
+  </script>
+
+</body>
+</html>

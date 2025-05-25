@@ -9,10 +9,10 @@ from src.asr.asr_interface import ASRInterface
 
 
 
-# Connection and ASR Configuration (Hardcoded or from env)
+# Connection and ASR Configuration for nvidia speech to text api
 
 class Args:
-    
+
 
     max_alternatives = 1
     profanity_filter = False
@@ -39,7 +39,7 @@ args = Args()
 class Nvidia_STT_API(ASRInterface):
 
     def __init__(self, **kwargs):
-        
+
      self.language_code = kwargs.get("language_code", "en")
 
      self.metadata = kwargs.get("metadata")
@@ -47,12 +47,12 @@ class Nvidia_STT_API(ASRInterface):
      self.use_ssl = kwargs.get("use_ssl")
      self.ssl_cert =  kwargs.get("ssl_cert")
      self.test_file =  kwargs.get("test_file")
-    
-     
 
-    async def transcribe(self, client=None):
 
-        if(client is None):
+
+    async def transcribe(self, client=None)->str:
+
+        if client is None:
 
            input_file = self.test_file
 
@@ -60,10 +60,9 @@ class Nvidia_STT_API(ASRInterface):
 
            input_file = await save_audio_to_file(client.scratch_buffer, client.get_file_name())
 
-        
+
         input_file = Path(input_file)
 
-        print("-----Path 0f input file--------",input_file)
 
         auth = riva.client.Auth(self.ssl_cert, self.use_ssl, self.server, self.metadata)
 
@@ -99,19 +98,18 @@ class Nvidia_STT_API(ASRInterface):
             data = fh.read()
 
         try:
+
             response = asr_service.offline_recognize(data, config)
+
             response_text = response.results[0].alternatives[0].transcript.strip()
+
+            return response_text
+
 
         except grpc.RpcError as e:
 
-            print(e.details())
-            response_text = ""
+            print("error in nvidia stt api",e)
+
 
         os.remove(input_file)
 
-        return {
-            "language": "en",
-            "language_probability": 0.91,
-            "text": response_text,
-            "words": "No words"
-        }

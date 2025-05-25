@@ -5,12 +5,27 @@ import time
 from dotenv import load_dotenv
 import requests
 import logging
+from .buffering_strategy_interface import BufferingStrategyInterface
 
 # Create logging instance
 logger = logging.getLogger(__name__)
 
 
-from .buffering_strategy_interface import BufferingStrategyInterface
+
+
+
+
+async  def send_audio_byte(websocekt):
+
+     with open("C:\\Users\mishr\Downloads\\test_filewav.wav", "rb") as audio_file:
+
+       while chunk := audio_file.read(1024):
+
+
+           await  websocekt.send(chunk)
+
+       await websocekt.send("EOF")  # signal the end
+
 
 
 class SilenceAtEndOfChunk(BufferingStrategyInterface):
@@ -64,7 +79,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
         self.processing_flag = False
 
-    
+
 
 
 
@@ -104,66 +119,89 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
             )
 
     async def process_audio_async(self, websocket, vad_pipeline, asr_pipeline,tts_pipeline,llm_pipeline):
-        """
-        Asynchronously process audio for activity detection and transcription.
-
-        This method performs heavy processing, including voice activity
-        detection and transcription of the audio data. It sends the
-        transcription results through the WebSocket connection.
-
-        Args:
-            websocket (Websocket): The WebSocket connection for sending
-                                   transcriptions.
-            vad_pipeline: The voice activity detection pipeline.
-            asr_pipeline: The automatic speech recognition pipeline.
-        """
-        start = time.time()
-        vad_results = await vad_pipeline.detect_activity(self.client)
-        # end =time.time()
-       # print("activity_detection_time:----",end-start)
-        if len(vad_results) == 0:
-            self.client.scratch_buffer.clear()
-            self.client.buffer.clear()
-            self.processing_flag = False
-            return
-
-        last_segment_should_end_before = (
-            len(self.client.scratch_buffer)
-            / (self.client.sampling_rate * self.client.samples_width)
-        ) - self.chunk_offset_seconds
-        if vad_results[-1]["end"] < last_segment_should_end_before:
-            transcription = await asr_pipeline.transcribe(self.client)
-
-            if transcription["text"] != "":
 
 
-                llm_response = await llm_pipeline.generate_response({'query':transcription["text"],'last_3_turn':[{"role":"user","content":""},{"role":"assistant","content":""}]})
 
-                end = time.time()
+            """
+            Asynchronously process audio for activity detection and transcription.
 
-                transcription["processing_time"] = end - start
+            This method performs heavy processing, including voice activity
+            detection and transcription of the audio data. It sends the
+            transcription results through the WebSocket connection.
 
-                if llm_response:
+            Args:
+                websocket (Websocket): The WebSocket connection for sending
+                                       transcriptions.
+                vad_pipeline: The voice activity detection pipeline.
+                asr_pipeline: The automatic speech recognition pipeline.
+            """
+            start = time.time()
+
+            vad_results = await vad_pipeline.detect_activity(self.client)
+
+            end =time.time()
+
+            print("activity_detection_time:----",end-start)
+
+            if len(vad_results) == 0:
+                self.client.scratch_buffer.clear()
+                self.client.buffer.clear()
+                self.processing_flag = False
+                return
+
+            last_segment_should_end_before = (
+                len(self.client.scratch_buffer)
+                / (self.client.sampling_rate * self.client.samples_width)
+            ) - self.chunk_offset_seconds
+
+            if vad_results[-1]["end"] < last_segment_should_end_before:
+
+                    await websocket.send(json.dumps({"type": "process"}))
+
                     try:
-                        audio_stream = await tts_pipeline.synthesise_stream_audio(llm_response.strip())
-                    except Exception as e:
-                        logger.error(f"TTS error: {e}")
-                        audio_stream = None
 
-                    await websocket.send(json.dumps(transcription))
+                        speech_to_text = True
 
-                    if audio_stream:
-                      try:
-                         for chunk in audio_stream:
-                             await websocket.send(chunk)
-                      except Exception as e:
-                         logger.error(f"Error while sending audio stream: {e}")
-                    else:
-                         logger.warning("No audio stream returned from TTS.")
-                else:
-                        logger.warning("LLM response was empty.")
 
-            self.client.scratch_buffer.clear()
-            self.client.increment_file_counter()
+                        if not speech_to_text:
 
-        self.processing_flag = False
+                            await websocket.send(json.dumps({"type": "error","value":"speech to text module error"}))
+
+                            logger.error("Error in speech to text module...")
+                            return
+
+
+                        llm_response = """नमस्ते, मैं ठीक हूँ, आप कैसे हैं?"""  # Replace with actual LLM output
+
+
+                        if not llm_response:
+
+                            await websocket.send(json.dumps({"type": "error","value":"LLM is not responding.."}))
+
+                            logger.error("LLM response was empty...")
+
+                            return
+
+
+                        text_to_speech = "audio_files_test/error_audio_voice.wav"
+
+
+                        if not text_to_speech:
+
+                            await websocket.send(json.dumps({"type": "error","value":"text to speech not working.."}))
+                            logger.error("No audio file returned from TTS.")
+
+                            return
+
+
+                        # ✅ Send audio url only if everything succeeded
+                        await websocket.send(json.dumps({"type":"url","value":text_to_speech}))
+
+
+                    finally:
+                        # ✅ Always clean up — even if there was an error
+                        self.client.scratch_buffer.clear()
+                        self.client.increment_file_counter()
+
+
+            self.processing_flag = False
