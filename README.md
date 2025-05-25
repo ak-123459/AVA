@@ -25,3 +25,35 @@ source PROJECT_AVA/bin/activate
 
 ```
 
+
+**Install Dependencies**
+
+```
+pip install -r requirements.txt
+```
+
+**Start websockets server**
+
+```
+python -m src.main
+```
+
+
+
+**Rurn the index.html file (Using python)**
+
+```
+cd client
+python -m http.server 8001
+
+```
+
+## 🚀 Prerequisites
+
+- Python >= 3.10
+- pip (comes with Python)
+
+
+
+
+
