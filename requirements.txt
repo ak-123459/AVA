@@ -10,3 +10,4 @@ torch~=2.3.0
 grpcio==1.71.0
 numpy==1.26.3
 murf==1.2.2
+python-dotenv==1.1.0
