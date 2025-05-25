@@ -10,7 +10,6 @@ Follow these steps to set up and run this project on your local machine.
 git clone https://github.com/ak-123459/AVA.git
 cd AVA
 ```
-***
 
 **Create and Activate a Virtual Environment(From Command line- Windows:)**
 ```
@@ -47,6 +46,8 @@ cd client
 python -m http.server 8001
 
 ```
+
+***
 
 ## 🚀 Prerequisites
 
