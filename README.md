@@ -10,4 +10,8 @@ Follow these steps to set up and run this project on your local machine.
 git clone https://github.com/ak-123459/AVA.git
 cd AVA
 ```
-**Create and Activate a Virtual Environment**
+**Create and Activate a Virtual Environment(From Command line)**
+``python -m venv PROJECT_AVA
+PROJECT_AVA\Scripts\activate
+``
+
