@@ -9,5 +9,5 @@ Follow these steps to set up and run this project on your local machine.
 ```bash
 git clone https://github.com/ak-123459/AVA.git
 cd AVA
-**Create and Activate a Virtual Environment**
 ```
+**Create and Activate a Virtual Environment**
