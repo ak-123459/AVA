@@ -49,7 +49,7 @@ python -m http.server 8001
 
 ***
 
-## 🚀 Prerequisites
+## 🔧 Prerequisites
 
 - Python >= 3.10
 - pip (comes with Python)
