@@ -37,6 +37,8 @@ pip install -r requirements.txt
 python -m src.main
 ```
 
+**Note:-** if permissions not given use sudo in linux.
+eg.``sudo python -m src.main``
 
 
 **Rurn the index.html file (Using python)**
