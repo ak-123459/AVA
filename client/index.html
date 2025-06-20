@@ -68,6 +68,40 @@
       display: none;
     }
 
+
+
+.start-button {
+  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  color: white;
+  font-size: 1.1em;
+  font-weight: bold;
+  padding: 15px 30px;
+  border: none;
+  border-radius: 50px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.start-button:hover:enabled {
+  background: linear-gradient(135deg, #66BB6A, #388E3C);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+.start-button:disabled {
+  background: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+    
+
+    
+    
+
   </style>
   <script defer src='utils.js'></script>
 </head>
@@ -131,7 +165,7 @@
   <button id="connectButton">Connect to Agent</button>
 </div>
 
-<button id="startButton" disabled>Start Conversations
+<button id="startButton" disabled class="start-button">🎤 Start Conversation</button>
 
 </button>
 
