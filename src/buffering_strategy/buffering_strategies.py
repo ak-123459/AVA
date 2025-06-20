@@ -160,7 +160,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                     try:
 
-                        speech_to_text = True
+                        speech_to_text = asr_pipeline.transcribe(self.client)
 
 
                         if not speech_to_text:
@@ -170,8 +170,9 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
                             logger.error("Error in speech to text module...")
                             return
 
+                        
                         # get llm response 
-                        llm_response = llm_pipeline.
+                        llm_response = llm_pipeline.generate_response('{"query":"Hello","last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]}')
 
 
                         if not llm_response:
@@ -182,8 +183,9 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                             return
 
-
-                        text_to_speech = "audio_files_test/error_audio_voice.wav"
+                        # tts pipeline
+                        
+                        text_to_speech = tts_pipeline.speech_synthesis(llm_response.strip())
 
 
                         if not text_to_speech:
