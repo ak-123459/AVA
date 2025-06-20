@@ -289,7 +289,7 @@ function startRecordingHandler() {
 
         // ➕ Check dominant frequency before processing
             const dominantFreq = getDominantFrequency(context.sampleRate);
-            const threshold = 25; // Hz (set your own value)
+            const threshold = 10; // Hz (set your own value)
 
              if (dominantFreq > threshold) {
                 processAudio(event.data); // Only send if freq > threshold
