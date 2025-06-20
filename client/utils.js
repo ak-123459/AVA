@@ -48,7 +48,7 @@ websocketAddress.addEventListener("keydown", (event) => {
 connectButton.addEventListener("click", connectWebsocketHandler);
 
 
-# function to play a audio file 
+// function to play a audio file 
 
 function playSound(audio_path) {
     
