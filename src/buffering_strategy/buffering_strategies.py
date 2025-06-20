@@ -172,7 +172,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                         
                         # get llm response 
-                        llm_response = llm_pipeline.generate_response('{"query":"Hello","last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]}')
+                        llm_response = llm_pipeline.generate_response({"query":speech_to_text,"last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]})
 
 
                         if not llm_response:
@@ -185,7 +185,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                         # tts pipeline
                         
-                        text_to_speech = tts_pipeline.speech_synthesis(llm_response.strip())
+                        text_to_speech = tts_pipeline.speech_synthesis(llm_response)
 
 
                         if not text_to_speech:
