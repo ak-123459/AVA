@@ -119,6 +119,38 @@ box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 transform: translateY(-2px);
 }
 
+
+    .status-container {
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 1.1em;
+  margin-top: 20px;
+}
+
+.status-label {
+  font-weight: bold;
+  color: #333;
+  margin-right: 8px;
+}
+
+.status-badge {
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.status-badge.connected {
+  background-color: #e0f8e9;
+  color: #2e7d32;
+  border: 1px solid #2e7d32;
+}
+
+.status-badge.not-connected {
+  background-color: #ffecec;
+  color: #c62828;
+  border: 1px solid #c62828;
+}
+
   
 
     
@@ -196,8 +228,13 @@ transform: translateY(-2px);
 <div id="transcription"></div>
 <br/>
 
-<div>AI AGENT: <span id="webSocketStatus">Not Connected</span></div>
+  
+<div class="status-container">
+  <span class="status-label">AI AGENT:</span>
+  <span id="webSocketStatus" class="status-badge not-connected">Not Connected ❌</span>
+</div>
 
+  
 
 <!--<div>Detected Language: <span id="detected_language">Undefined</span></div>-->
 <!--<div>Last Processing Time: <span id="processing_time">Undefined</span></div>-->
