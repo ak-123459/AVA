@@ -76,6 +76,8 @@ function playAudioFromUrl(url) {
           console.log("✅ Audio playback finished.");
           loadAnimation("assets/voice_animation.json", false, true); // Switch animation when done
           startButton.disabled = false;
+          is_conv_start = false
+  
 
         };
 
@@ -87,6 +89,8 @@ function playAudioFromUrl(url) {
         console.error("❌ Error playing audio:", e);
         loadAnimation("assets/voice_animation.json",autoplay=false,is_current=true)
         startButton.disabled = false;
+        is_conv_start = false
+    
 
         reject(false);
 
@@ -99,6 +103,8 @@ function playAudioFromUrl(url) {
         loadAnimation("assets/voice_animation.json",autoplay=false,is_current=true)
         console.error("Error playing audio:", err);
         startButton.disabled = false;
+        is_conv_start = false
+
 
       }
 
@@ -190,12 +196,11 @@ function connectWebsocketHandler() {
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 startButton.disabled = false;
                 console.error(message.value);
-                
+                is_conv_start = false
 
+            
 
-
-
-            } else if (message.type === "url") {
+            } else if (message.type === "url" && is_conv_start = true) {
 
                 playAudioFromUrl(message.value);
 
@@ -206,6 +211,7 @@ function connectWebsocketHandler() {
             } else {
 
                 stopRecordingHandler();
+                is_conv_start = false
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 console.warn("Unknown message type:", message.type);
 
@@ -219,6 +225,7 @@ function connectWebsocketHandler() {
 
         console.error("Failed to parse message:", err);
         console.log("Raw data:", event.data);
+        is_conv_start = false
         stopRecordingHandler();
         loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
    
@@ -341,7 +348,6 @@ function stopRecordingHandler() {
     isRecording = false;
     recordingSeconds = 0;
     stopTimer()
-    is_conv_start = false
 
 
 
