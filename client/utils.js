@@ -66,9 +66,9 @@ function playAudioFromUrl(url) {
 
   try {
         audioPlayer.src = url;
+        loadAnimation("assets/agent_speaking.json",autoplay=true,is_current=true)
         audioPlayer.play();
         console.log("Audio started playing...");
-        loadAnimation("assets/agent_speaking.json",autoplay=true,is_current=true)
 
 
 
@@ -199,12 +199,14 @@ function connectWebsocketHandler() {
 
                 playAudioFromUrl(message.value);
 
+
                 return;
 
 
             } else {
 
                 stopRecordingHandler();
+                loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 console.warn("Unknown message type:", message.type);
 
             }
@@ -218,6 +220,8 @@ function connectWebsocketHandler() {
         console.error("Failed to parse message:", err);
         console.log("Raw data:", event.data);
         stopRecordingHandler();
+        loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
+   
     }
 
 
