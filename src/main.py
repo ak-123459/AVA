@@ -37,7 +37,8 @@ NVC_API_KEY = os.getenv("NVIDIA_STT_API_KEY")
 # murf api key
 MURF_API_KEY = os.getenv("MURF_TTS_API_KEY")
 
-
+# llm host api
+LLM_HOST_ENDPOINT = os.getenv("LLM_HOST_ENDPOINT")
 
 
 
@@ -190,7 +191,7 @@ def main():
 
 
         # Inject llm_args values
-        llm_args['host'] = "http://127.0.0.1:8000"
+        llm_args['host'] = LLM_HOST_ENDPOINT
 
         llm_args['payloads'] = '{"query":"Hello","last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]}'
 
