@@ -97,7 +97,29 @@
   box-shadow: none;
 }
 
-    
+
+  .connect-button {
+background: linear-gradient(135deg, #2196F3, #0D47A1);
+color: white;
+font-size: 1.1em;
+font-weight: bold;
+padding: 15px 30px;
+border: none;
+border-radius: 50px;
+box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+transition: all 0.3s ease;
+cursor: pointer;
+letter-spacing: 0.5px;
+margin-top: 10px;
+}
+
+.connect-button:hover {
+background: linear-gradient(135deg, #42A5F5, #1565C0);
+box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+transform: translateY(-2px);
+}
+
+  
 
     
     
@@ -162,7 +184,9 @@
 <!--      <option value="greek">Greek</option>-->
 <!--    </select>-->
 <!--  </div>-->
-  <button id="connectButton">Connect to Agent</button>
+  
+<button id="connectButton" class="connect-button">🔗 Connect to Agent</button>
+  
 </div>
 
 <button id="startButton" disabled class="start-button">🎤 Start Conversation</button>
