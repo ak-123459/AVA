@@ -18,7 +18,7 @@ class CustomHostLLM(LLMInterface):
      self.payloads = kwargs.get("payloads")
      
     
-    async def  generate_response(self,payloads:dict=self.payloads):
+    async def  generate_response(self,payloads:dict=None):
 
         if(payloads is None):
           
