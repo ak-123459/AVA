@@ -97,6 +97,9 @@ class Nvidia_STT_API(ASRInterface):
         with input_file.open('rb') as fh:
             data = fh.read()
 
+        # remove the current audio file  file
+        os.remove(input_file)
+    
         try:
 
             response = asr_service.offline_recognize(data, config)
@@ -105,11 +108,9 @@ class Nvidia_STT_API(ASRInterface):
 
             return response_text
 
-
         except grpc.RpcError as e:
 
             print("error in nvidia stt api",e)
 
 
-        os.remove(input_file)
 
