@@ -170,8 +170,8 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
                             logger.error("Error in speech to text module...")
                             return
 
-
-                        llm_response = """नमस्ते, मैं ठीक हूँ, आप कैसे हैं?"""  # Replace with actual LLM output
+                        # get llm response 
+                        llm_response = llm_pipeline.
 
 
                         if not llm_response:
