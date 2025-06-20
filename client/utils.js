@@ -409,7 +409,7 @@ function processAudio(sampleData) {
     // Implementing changes to the sampling rate using JavaScript can reduce
     // computational costs on the server.
 
-        if(!is_conv_start && recordingSeconds==5){
+        if(!is_conv_start && recordingSeconds==9){
 
              stopRecordingHandler();
              startButton.disabled = false;
