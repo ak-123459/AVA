@@ -190,9 +190,8 @@ function connectWebsocketHandler() {
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 startButton.disabled = false;
                 console.error(message.value);
-                startRecordingHandler();
+                
 
-//                stopButton.disabled = false;
 
 
 
@@ -205,6 +204,7 @@ function connectWebsocketHandler() {
 
             } else {
 
+                stopRecordingHandler();
                 console.warn("Unknown message type:", message.type);
 
             }
