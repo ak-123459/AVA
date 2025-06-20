@@ -159,7 +159,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
                             logger.error("Error in speech to text module...")
                             return
 
-                        
+                        print("speech to text completed..")                        
                         # get llm response 
                         llm_response = await llm_pipeline.generate_response({"query":speech_to_text,"last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]})
 
@@ -171,12 +171,12 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
                             logger.error("LLM response was empty...")
 
                             return
-
+                            
+                        print("llm response completed..")                        
                         # tts pipeline
-                        
                         text_to_speech = await tts_pipeline.speech_synthesis(llm_response)
 
-
+                       
                         if not text_to_speech:
 
                             await websocket.send(json.dumps({"type": "error","value":"text to speech not working.."}))
@@ -184,7 +184,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                             return
 
-
+                        print("text to speech completed..")                        
                         # ✅ Send audio url only if everything succeeded
                         await websocket.send(json.dumps({"type":"url","value":text_to_speech}))
 
