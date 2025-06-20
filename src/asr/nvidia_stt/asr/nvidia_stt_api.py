@@ -104,9 +104,16 @@ class Nvidia_STT_API(ASRInterface):
 
             response = asr_service.offline_recognize(data, config)
 
-            response_text = response.results[0].alternatives[0].transcript.strip()
-
-            return response_text
+            try : 
+               
+                  response_text = response.results[0].alternatives[0].transcript.strip()
+                  response_text = "sorry Iam not able to understand what you want to ask.." 
+               
+           except IndexError:
+               
+                return  response_text
+            
+           return response_text
 
         except grpc.RpcError as e:
 
