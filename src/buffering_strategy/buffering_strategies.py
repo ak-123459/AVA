@@ -15,17 +15,6 @@ logger = logging.getLogger(__name__)
 
 
 
-async  def send_audio_byte(websocekt):
-
-     with open("C:\\Users\mishr\Downloads\\test_filewav.wav", "rb") as audio_file:
-
-       while chunk := audio_file.read(1024):
-
-
-           await  websocekt.send(chunk)
-
-       await websocekt.send("EOF")  # signal the end
-
 
 
 class SilenceAtEndOfChunk(BufferingStrategyInterface):
@@ -160,7 +149,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                     try:
 
-                        speech_to_text = asr_pipeline.transcribe(self.client)
+                        speech_to_text = await asr_pipeline.transcribe(self.client)
 
 
                         if not speech_to_text:
@@ -172,7 +161,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                         
                         # get llm response 
-                        llm_response = llm_pipeline.generate_response({"query":speech_to_text,"last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]})
+                        llm_response = await llm_pipeline.generate_response({"query":speech_to_text,"last_3_turn":[{"role":"user","content":""},{"role":"assistant","content":""}]})
 
 
                         if not llm_response:
@@ -185,7 +174,7 @@ class SilenceAtEndOfChunk(BufferingStrategyInterface):
 
                         # tts pipeline
                         
-                        text_to_speech = tts_pipeline.speech_synthesis(llm_response)
+                        text_to_speech = await tts_pipeline.speech_synthesis(llm_response)
 
 
                         if not text_to_speech:
