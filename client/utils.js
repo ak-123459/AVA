@@ -200,7 +200,7 @@ function connectWebsocketHandler() {
 
             
 
-            } else if (message.type === "url" && is_conv_start = true) {
+            } else if (message.type === "url" && is_conv_start === true) {
 
                 playAudioFromUrl(message.value);
 
