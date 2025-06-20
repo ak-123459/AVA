@@ -48,6 +48,16 @@ websocketAddress.addEventListener("keydown", (event) => {
 connectButton.addEventListener("click", connectWebsocketHandler);
 
 
+# function to play a audio file 
+
+function playSound(audio_path) {
+    
+    const audio = new Audio(audio_path); 
+    audio.play();
+
+}
+
+
 
 
 
@@ -241,6 +251,8 @@ startButton.addEventListener("click", startRecordingHandler);
 
 function startRecordingHandler() {
     if (isRecording) return;
+    
+    playSound("assets/start_notific.mp3")
     isRecording = true;
     is_conv_start = false
     recordingSeconds = 0; // ⏱ Reset the timer
@@ -321,6 +333,7 @@ async function setupRecordingWorkletNode() {
 function stopRecordingHandler() {
 
     if (!isRecording) return;
+    playSound("assets/end_notific.mp3")
     isRecording = false;
     recordingSeconds = 0;
     stopTimer()
