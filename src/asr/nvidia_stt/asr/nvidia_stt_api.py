@@ -107,13 +107,12 @@ class Nvidia_STT_API(ASRInterface):
             try : 
                
                   response_text = response.results[0].alternatives[0].transcript.strip()
-                  response_text = "sorry Iam not able to understand what you want to ask.." 
+                
+            except IndexError:
                
-           except IndexError:
-               
-                return  response_text
+                return  "sorry Iam not able to understand what you want to ask.." 
             
-           return response_text
+            return response_text
 
         except grpc.RpcError as e:
 
