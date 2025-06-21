@@ -1,9 +1,4 @@
-/**
- * VoiceStreamAI Client - WebSocket-based real-time transcription
- *
- * Contributor:
- * - Alessandro Saccoia - alessandro.saccoia@gmail.com
- */
+
 
 let websocket;
 let context;
@@ -20,8 +15,9 @@ let currentAnimation = null;
 const websocketAddress = document.querySelector('#websocketAddress');
 const selectedLanguage = document.querySelector('#languageSelect');
 const websocketStatus = document.querySelector('#webSocketStatus');
-const connectButton = document.querySelector("#connectButton");
 const startButton = document.querySelector('#startButton');
+startButton.disabled = false;
+
 //const panel = document.querySelector('#silence_at_end_of_chunk_options_panel');
 //const selectedStrategy = document.querySelector('#bufferingStrategySelect');
 //const chunk_length_seconds = document.querySelector('#chunk_length_seconds');
@@ -33,19 +29,20 @@ audioPlayer.style.display = "none";  // hide if added to DOM
 document.body.appendChild(audioPlayer);
 
 
+function showToast(message, duration = 3000) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.style.opacity = 1;
+
+    setTimeout(() => {
+        toast.style.opacity = 0;
+    }, duration);
+}
 
 
-websocketAddress.addEventListener("input", resetWebsocketHandler);
-
-websocketAddress.addEventListener("keydown", (event) => {
-    if (event.key === 'Enter') {
-        event.preventDefault();
-        connectWebsocketHandler();
-    }
-});
 
 
-connectButton.addEventListener("click", connectWebsocketHandler);
+
 
 
 // function to play a audio file 
@@ -56,6 +53,8 @@ function playSound(audio_path) {
     audio.play();
 
 }
+
+
 
 
 
@@ -73,7 +72,7 @@ function playAudioFromUrl(url) {
 
 
         audioPlayer.onended = () => {
-          console.log("✅ Audio playback finished.");
+        console.log("✅ Audio playback finished.");
           loadAnimation("assets/voice_animation.json", false, true); // Switch animation when done
           startButton.disabled = false;
           is_conv_start = false
@@ -140,7 +139,7 @@ function resetWebsocketHandler() {
     if (websocket.readyState === WebSocket.OPEN) {
         websocket.close();
     }
-    connectButton.disabled = false;
+    
 }
 
 
@@ -157,9 +156,8 @@ function connectWebsocketHandler() {
     websocket = new WebSocket(websocketAddress.value);
     websocket.onopen = () => {
         console.log("WebSocket connection established");
+        showToast("🎙️ Agent started...");  
         websocketStatus.textContent = 'Connected';
-        startButton.disabled = false;
-        connectButton.disabled = true;
     };
 
 
@@ -170,7 +168,7 @@ function connectWebsocketHandler() {
         websocketStatus.textContent = 'Not Connected';
         startButton.disabled = true;
 //        stopButton.disabled = true;
-        connectButton.disabled = false;
+        
     };
 
     websocket.onmessage = event => {
@@ -197,15 +195,22 @@ function connectWebsocketHandler() {
                 startButton.disabled = false;
                 console.error(message.value);
                 is_conv_start = false
+                resetWebsocketHandler()
 
             
 
             } else if (message.type === "url" && is_conv_start === true) {
 
                 playAudioFromUrl(message.value);
+                resetWebsocketHandler()
 
 
                 return;
+
+	  }else if (message.type ==="voice detected"){
+
+
+              is_vad = true;
 
 
             } else {
@@ -214,6 +219,7 @@ function connectWebsocketHandler() {
                 is_conv_start = false
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 console.warn("Unknown message type:", message.type);
+                resetWebsocketHandler()
 
             }
 
@@ -228,7 +234,7 @@ function connectWebsocketHandler() {
         is_conv_start = false
         stopRecordingHandler();
         loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
-   
+        resetWebsocketHandler()
     }
 
 
@@ -262,7 +268,16 @@ startButton.addEventListener("click", startRecordingHandler);
 
 function startRecordingHandler() {
     if (isRecording) return;
-    
+    startButton.disabled = true;
+    connectWebsocketHandler()
+
+    // Wait a short delay to ensure WebSocket is connected before starting recording
+    setTimeout(() => {
+        if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+            console.error("WebSocket not connected. Cannot start recording.");
+            return;
+        }
+    showToast("🎙️ Agent Listenting..."); 
     playSound("assets/start_notific.mp3")
     isRecording = true;
     is_conv_start = false
@@ -322,10 +337,11 @@ function startRecordingHandler() {
         }
     }).then(onSuccess, onError);
 
-    // Disable start button and enable stop button
-    startButton.disabled = true;
+    
 //    stopButton.disabled = false;
+ }, 1000); // adjust delay as needed
 }
+
 
 async function setupRecordingWorkletNode() {
     await context.audioWorklet.addModule('realtime-audio-processor.js');
@@ -338,7 +354,7 @@ async function setupRecordingWorkletNode() {
 
 
 
-//stopButton.addEventListener("click", stopRecordingHandler);
+// stopButton.addEventListener("click", stopRecordingHandler);
 
 
 function stopRecordingHandler() {
@@ -348,7 +364,8 @@ function stopRecordingHandler() {
     isRecording = false;
     recordingSeconds = 0;
     stopTimer()
-
+    is_vad = false
+    showToast("🎙️ Recording stopped...");
 
 
     if (globalStream) {
@@ -363,6 +380,10 @@ function stopRecordingHandler() {
 
         context.close().then(() => context = null);
     }
+
+
+
+
 //    startButton.disabled = false;
 //    stopButton.disabled = true;
 }
@@ -419,7 +440,7 @@ function processAudio(sampleData) {
     // Implementing changes to the sampling rate using JavaScript can reduce
     // computational costs on the server.
 
-        if(!is_conv_start && recordingSeconds==9){
+        if(!is_conv_start && recordingSeconds==10){
 
              stopRecordingHandler();
              startButton.disabled = false;
@@ -545,6 +566,10 @@ function loadAnimation(path,autoplay=false,is_current=false) {
 // Optionally, load the first animation on page load
 window.onload = () => {
     loadAnimation('assets/voice_animation.json',is_current=false);
+    // Connect to WebSocket on app load
+   
+
+
   };
 
 
