@@ -196,6 +196,7 @@ function connectWebsocketHandler() {
                 console.error(message.value);
                 is_conv_start = false
                 resetWebsocketHandler()
+                playSound("assets/error_notific1.mp3")
 
             
 
@@ -235,6 +236,7 @@ function connectWebsocketHandler() {
         stopRecordingHandler();
         loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
         resetWebsocketHandler()
+        playSound("assets/error_notific1.mp3")   
     }
 
 
@@ -275,6 +277,8 @@ function startRecordingHandler() {
     setTimeout(() => {
         if (!websocket || websocket.readyState !== WebSocket.OPEN) {
             console.error("WebSocket not connected. Cannot start recording.");
+            playSound("assets/error_notific1.mp3");
+            showToast(" 😕 Agent not available...");
             return;
         }
     showToast("🎙️ Agent Listenting..."); 
