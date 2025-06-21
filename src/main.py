@@ -185,7 +185,7 @@ def main():
         # Inject tts_args values
         tts_args.setdefault("format", "WAV")
         tts_args.setdefault("sample_rate", "44100")
-        tts_args.setdefault("voice_id", "hi-IN-kabir")
+        tts_args.setdefault("voice_id", "hi-IN-shweta")
         tts_args["MURF_TTS_API_KEY"] = MURF_API_KEY
 
 
