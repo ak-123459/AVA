@@ -170,7 +170,7 @@ function connectWebsocketHandler() {
     websocket.onclose = event => {
         console.log("WebSocket connection closed", event);
         websocketStatus.textContent = 'Not Connected';
-        startButton.disabled = true;
+        startButton.disabled = false;
 //        stopButton.disabled = true;
         
     };
@@ -191,19 +191,16 @@ function connectWebsocketHandler() {
                    is_conv_start = true;
                    stopRecordingHandler();
                    loadAnimation("assets/progress.json",autoplay=true,is_current=true)
-                   return;
-
 
 
             } else if (message.type === "error") {
 
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
-                startButton.disabled = false;
                 console.error(message.value);
                 is_conv_start = false
                 resetWebsocketHandler()
                 playSound("assets/error_notific1.mp3")
-                return;
+                startButton.disabled = false;
 
             
 
@@ -211,8 +208,6 @@ function connectWebsocketHandler() {
 
                 playAudioFromUrl(message.value);
                 resetWebsocketHandler()
-                startButton.disabled = false;
-
 
                 return;
 
@@ -229,9 +224,6 @@ function connectWebsocketHandler() {
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 console.warn("Unknown message type:", message.type);
                 resetWebsocketHandler()
-                startButton.disabled = false;
-
-                return;
 
 
             }
@@ -245,7 +237,6 @@ function connectWebsocketHandler() {
         console.error("Failed to parse message:", err);
         console.log("Raw data:", event.data);
         is_conv_start = false
-        startButton.disabled = false;
         stopRecordingHandler();
         loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
         resetWebsocketHandler()
