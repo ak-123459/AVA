@@ -65,21 +65,25 @@ function playAudioFromUrl(url) {
 
   try {
         audioPlayer.src = url;
-        loadAnimation("assets/agent_speaking.json",autoplay=true,is_current=true)
-        audioPlayer.play();
-        console.log("Audio started playing...");
-
-
-
-        audioPlayer.onended = () => {
-        console.log("✅ Audio playback finished.");
-          loadAnimation("assets/voice_animation.json", false, true); // Switch animation when done
-          startButton.disabled = false;
-          is_conv_start = false
-  
-
-        };
-
+      
+         // Wait until audio is buffered enough
+       audioPlayer.oncanplaythrough = () => {
+         audioPlayer.play().then(() => {
+         console.log("✅ Audio started playing...");
+         loadAnimation("assets/agent_speaking.json",autoplay=true,is_current=true)
+          audioPlayer.onended = () => {
+            console.log("✅ Audio playback finished.");
+            loadAnimation("assets/voice_animation.json", false, true);
+            startButton.disabled = false;
+            is_conv_start = false;
+              };
+           }).catch(err => {
+        console.error("❌ Error playing audio:", err);
+        loadAnimation("assets/voice_animation.json", false, true);
+        startButton.disabled = false;
+        is_conv_start = false;
+      });
+    };
 
 
 
