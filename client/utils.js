@@ -191,6 +191,8 @@ function connectWebsocketHandler() {
                    is_conv_start = true;
                    stopRecordingHandler();
                    loadAnimation("assets/progress.json",autoplay=true,is_current=true)
+                   return;
+
 
 
             } else if (message.type === "error") {
@@ -201,6 +203,7 @@ function connectWebsocketHandler() {
                 is_conv_start = false
                 resetWebsocketHandler()
                 playSound("assets/error_notific1.mp3")
+                return;
 
             
 
@@ -208,6 +211,7 @@ function connectWebsocketHandler() {
 
                 playAudioFromUrl(message.value);
                 resetWebsocketHandler()
+                startButton.disabled = false;
 
 
                 return;
@@ -225,6 +229,10 @@ function connectWebsocketHandler() {
                 loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
                 console.warn("Unknown message type:", message.type);
                 resetWebsocketHandler()
+                startButton.disabled = false;
+
+                return;
+
 
             }
 
@@ -237,6 +245,7 @@ function connectWebsocketHandler() {
         console.error("Failed to parse message:", err);
         console.log("Raw data:", event.data);
         is_conv_start = false
+        startButton.disabled = false;
         stopRecordingHandler();
         loadAnimation("assets/voice_animation.json",autoplay=true,is_current=true)
         resetWebsocketHandler()
